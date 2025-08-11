@@ -1,0 +1,44 @@
+services:
+  maps-backend:
+    build: ./backend
+    container_name: maps-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - GOOGLE_MAPS_API_KEY=xxx
+    restart: unless-stopped
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    volumes:
+      - open-webui:/app/backend/data
+      - ./google_maps_tool.py:/app/backend/data/functions/google_maps_tool.py
+    ports:
+      - "3000:8080"
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - WEBUI_SECRET_KEY=
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    restart: unless-stopped
+    depends_on:
+      - ollama
+      - maps-backend
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11436:11434"
+    volumes:
+      - ollama:/root/.ollama
+    runtime: nvidia
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+      - NVIDIA_VISIBLE_DEVICES=all
+    restart: unless-stopped
+
+volumes:
+  ollama:
+  open-webui:
