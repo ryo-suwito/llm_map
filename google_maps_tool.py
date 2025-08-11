@@ -68,13 +68,7 @@ class Tools:
                 await __event_emitter__({
                     "type": "message", 
                     "data": {"content": f'''```html
-<!DOCTYPE html>
-<html>
-<head><title>Map</title></head>
-<body>
 <iframe src="{data["embed_map_url"]}" width="100%" height="400" frameborder="0" allowfullscreen></iframe>
-</body>
-</html>
 ```\n'''}
                 })
             return result
